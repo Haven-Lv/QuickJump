@@ -52,8 +52,5 @@ APK 输出在 `app/build/outputs/apk/debug/app-debug.apk`。
 
 - 仅供个人学习与自用，**请勿上架应用商店**
 - 各页面入口属于第三方 App 的内部链接，版权归对应公司所有
-- 入口核对参考了开源项目 [EidenLiu/pickup-code-launcher](https://github.com/EidenLiu/pickup-code-launcher)（MIT），感谢分享
-
----
 
 作者：chuhe0719 · 抖音号：29910020595
