@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 页面背景：左上偏冷的浅色渐变，向右下微微加深 -->
+<!-- 页面背景：随系统深浅色自动切换的柔和渐变 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <gradient
         android:angle="315"
-        android:startColor="#FAFBFF"
-        android:centerColor="#F4F6FC"
-        android:endColor="#ECEFF8"
+        android:startColor="@color/bg_start"
+        android:centerColor="@color/bg_mid"
+        android:endColor="@color/bg_end"
         android:type="linear" />
 </shape>

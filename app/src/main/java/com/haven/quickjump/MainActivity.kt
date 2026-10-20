@@ -3,6 +3,9 @@ package com.haven.quickjump
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
@@ -11,11 +14,19 @@ import android.text.util.Linkify
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import java.util.Collections
 
 /**
  * 快捷跳转 —— 直达快递取件码/待取页面。
@@ -53,17 +64,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        applyEdgeToEdge()
 
-        // 首页 2×3 按钮：点击跳转，长按编辑入口链接
-        bind(R.id.btn_cainiao, KEY_CAINIAO)
-        bind(R.id.btn_taobao, KEY_TAOBAO)
-        bind(R.id.btn_pdd, KEY_PDD)
-        bind(R.id.btn_express, KEY_EXPRESS)
-        bind(R.id.btn_pdd_pending, KEY_PDD_PENDING)
-        bind(R.id.btn_douyin, KEY_DOUYIN)
+        // 按本地保存的顺序构建两个分组与卡片
+        buildHome()
 
         // 处理桌面长按快捷方式带入的跳转请求
         handleDispatchIntent(intent)
+
+        // 右上角铅笔：进入/退出排序编辑模式
+        findViewById<View>(R.id.btn_edit).setOnClickListener { toggleEditMode() }
 
         // 左下角问号：点开「关于」，长按编辑内容
         findViewById<View>(R.id.btn_about).setOnClickListener { showAbout() }
@@ -78,13 +88,240 @@ class MainActivity : AppCompatActivity() {
         handleDispatchIntent(intent)
     }
 
-    private fun bind(viewId: Int, key: String) {
-        val btn = findViewById<View>(viewId)
-        btn.setOnClickListener { jumpFor(key) }
-        btn.setOnLongClickListener {
-            showEditDialog(key)
-            true
+    // ---------- 首页分组、排序与编辑模式 ----------
+
+    /** 一个分组：标题、小图标、默认成员 */
+    private data class GroupDef(
+        val key: String,
+        val titleRes: Int,
+        val iconRes: Int,
+        val iconTintRes: Int,
+        val defaultItems: List<String>
+    )
+
+    /** 一张卡片的展示信息 */
+    private data class ItemMeta(
+        val titleRes: Int,
+        val descRes: Int,
+        val iconRes: Int,
+        val tileTintRes: Int
+    )
+
+    /** 首页两个分组；linkedMapOf 保证默认顺序稳定 */
+    private val groups = linkedMapOf(
+        GROUP_CODE to GroupDef(
+            GROUP_CODE, R.string.group_code, R.drawable.ic_section_code, R.color.group_code_tint,
+            listOf(KEY_CAINIAO, KEY_TAOBAO, KEY_PDD)
+        ),
+        GROUP_PACKAGES to GroupDef(
+            GROUP_PACKAGES, R.string.group_packages, R.drawable.ic_section_package, R.color.group_packages_tint,
+            listOf(KEY_EXPRESS, KEY_PDD_PENDING, KEY_DOUYIN)
+        )
+    )
+
+    private val itemMeta = mapOf(
+        KEY_CAINIAO to ItemMeta(
+            R.string.short_cainiao, R.string.desc_cainiao, R.drawable.ic_cainiao, R.color.tile_cainiao
+        ),
+        KEY_TAOBAO to ItemMeta(
+            R.string.short_taobao, R.string.desc_taobao, R.drawable.ic_taobao, R.color.tile_taobao
+        ),
+        KEY_PDD to ItemMeta(
+            R.string.short_pdd, R.string.desc_pdd, R.drawable.ic_pdd, R.color.tile_pdd
+        ),
+        KEY_EXPRESS to ItemMeta(
+            R.string.short_express, R.string.desc_express, R.drawable.ic_express, R.color.tile_express
+        ),
+        KEY_PDD_PENDING to ItemMeta(
+            R.string.short_pdd_pending, R.string.desc_pdd_pending, R.drawable.ic_pdd, R.color.tile_pdd_pending
+        ),
+        KEY_DOUYIN to ItemMeta(
+            R.string.short_douyin, R.string.desc_douyin, R.drawable.ic_douyin, R.color.tile_douyin
+        )
+    )
+
+    private var editMode = false
+
+    private fun dp(value: Int): Int =
+        (value * resources.displayMetrics.density).toInt()
+
+    /**
+     * 内容延伸到状态栏/导航栏后面：
+     * 背景渐变铺满整屏（包括底部手势条区域），控件按 insets 让开系统栏；
+     * 状态栏、导航栏图标颜色跟随深浅色反转。
+     */
+    private fun applyEdgeToEdge() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+
+        val night = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                Configuration.UI_MODE_NIGHT_YES
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = !night
+            isAppearanceLightNavigationBars = !night
         }
+
+        val root = findViewById<View>(R.id.root)
+        val baseTop = root.paddingTop
+        val baseBottom = root.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                baseTop + bars.top,
+                view.paddingRight,
+                baseBottom + bars.bottom
+            )
+            insets
+        }
+    }
+
+    /** 右上角铅笔：进入/退出排序编辑模式 */
+    private fun toggleEditMode() {
+        editMode = !editMode
+        buildHome()
+        Toast.makeText(
+            this,
+            if (editMode) R.string.edit_mode_on else R.string.edit_mode_off,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    /** 按当前顺序重建整个首页 */
+    private fun buildHome() {
+        val container = findViewById<LinearLayout>(R.id.group_container)
+        container.removeAllViews()
+
+        currentGroupOrder().forEachIndexed { index, groupKey ->
+            if (index > 0) container.addView(makeDivider())
+            container.addView(makeGroupView(groupKey))
+        }
+
+        findViewById<ImageButton>(R.id.btn_edit).apply {
+            setImageResource(if (editMode) R.drawable.ic_check else R.drawable.ic_edit)
+            imageTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(context, if (editMode) R.color.accent else R.color.icon_secondary)
+            )
+        }
+    }
+
+    private fun makeDivider(): View = View(this).apply {
+        val vertical = dp(12)
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, dp(1)
+        ).also { it.setMargins(0, vertical, 0, vertical) }
+        setBackgroundColor(ContextCompat.getColor(context, R.color.divider))
+    }
+
+    private fun makeGroupView(groupKey: String): View {
+        val def = groups.getValue(groupKey)
+        val view = layoutInflater.inflate(
+            R.layout.section_group, findViewById<LinearLayout>(R.id.group_container), false
+        )
+
+        view.findViewById<ImageView>(R.id.section_icon).apply {
+            setImageResource(def.iconRes)
+            backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(context, R.color.section_icon_bg)
+            )
+            imageTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(context, def.iconTintRes)
+            )
+        }
+        view.findViewById<TextView>(R.id.section_title).setText(def.titleRes)
+
+        view.findViewById<ImageButton>(R.id.section_swap).apply {
+            visibility = if (editMode && groups.size > 1) View.VISIBLE else View.GONE
+            setOnClickListener { swapGroups() }
+        }
+
+        val row = view.findViewById<LinearLayout>(R.id.items_row)
+        val order = currentItemOrder(groupKey)
+        order.forEachIndexed { index, itemKey ->
+            row.addView(makeItemView(groupKey, itemKey, index, order.size))
+        }
+        return view
+    }
+
+    private fun makeItemView(groupKey: String, itemKey: String, index: Int, count: Int): View {
+        val meta = itemMeta.getValue(itemKey)
+        val card = layoutInflater.inflate(
+            R.layout.item_entry, findViewById<LinearLayout>(R.id.group_container), false
+        )
+
+        val gap = dp(4)
+        card.layoutParams = LinearLayout.LayoutParams(
+            0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f
+        ).also { it.setMargins(gap, gap, gap, gap) }
+
+        card.findViewById<ImageView>(R.id.item_icon).apply {
+            setImageResource(meta.iconRes)
+            backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(context, meta.tileTintRes)
+            )
+        }
+        card.findViewById<TextView>(R.id.item_title).setText(meta.titleRes)
+        card.findViewById<TextView>(R.id.item_desc).setText(meta.descRes)
+        card.findViewById<LinearLayout>(R.id.edit_bar).visibility =
+            if (editMode) View.VISIBLE else View.GONE
+
+        card.isClickable = !editMode
+        card.isLongClickable = !editMode
+        card.setOnClickListener { if (!editMode) jumpFor(itemKey) }
+        card.setOnLongClickListener {
+            if (editMode) {
+                false
+            } else {
+                showEditDialog(itemKey)
+                true
+            }
+        }
+
+        val left = card.findViewById<ImageButton>(R.id.move_left)
+        val right = card.findViewById<ImageButton>(R.id.move_right)
+        left.isEnabled = index > 0
+        right.isEnabled = index < count - 1
+        left.alpha = if (left.isEnabled) 1f else 0.25f
+        right.alpha = if (right.isEnabled) 1f else 0.25f
+        left.setOnClickListener { moveItem(groupKey, itemKey, -1) }
+        right.setOnClickListener { moveItem(groupKey, itemKey, 1) }
+
+        return card
+    }
+
+    /** 分组顺序：已保存的合法项 + 未出现过的新分组补在末尾 */
+    private fun currentGroupOrder(): List<String> {
+        val saved = prefs.getString(PREF_ORDER_GROUPS, null)
+            ?.split(",")?.filter { groups.containsKey(it) } ?: emptyList()
+        return saved + groups.keys.filter { it !in saved }
+    }
+
+    /** 组内顺序：同样做一次兜底，避免以后新增入口时丢失 */
+    private fun currentItemOrder(groupKey: String): List<String> {
+        val defaults = groups.getValue(groupKey).defaultItems
+        val saved = prefs.getString(PREF_ORDER_ITEMS + groupKey, null)
+            ?.split(",")?.filter { it in defaults } ?: emptyList()
+        return saved + defaults.filter { it !in saved }
+    }
+
+    private fun moveItem(groupKey: String, itemKey: String, delta: Int) {
+        val order = currentItemOrder(groupKey).toMutableList()
+        val from = order.indexOf(itemKey)
+        val to = from + delta
+        if (from < 0 || to !in order.indices) return
+        Collections.swap(order, from, to)
+        prefs.edit().putString(PREF_ORDER_ITEMS + groupKey, order.joinToString(",")).apply()
+        buildHome()
+    }
+
+    private fun swapGroups() {
+        val order = currentGroupOrder().toMutableList()
+        if (order.size < 2) return
+        Collections.swap(order, 0, 1)
+        prefs.edit().putString(PREF_ORDER_GROUPS, order.joinToString(",")).apply()
+        buildHome()
+        Toast.makeText(this, R.string.groups_swapped, Toast.LENGTH_SHORT).show()
     }
 
     private fun handleDispatchIntent(intent: Intent?) {
@@ -334,6 +571,12 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_EXPRESS = "express"
         private const val KEY_PDD_PENDING = "pdd_pending"
         private const val KEY_DOUYIN = "douyin"
+
+        // 分组与排序（保存在本机）
+        private const val GROUP_CODE = "code"
+        private const val GROUP_PACKAGES = "packages"
+        private const val PREF_ORDER_GROUPS = "order_groups"
+        private const val PREF_ORDER_ITEMS = "order_items_"
 
         // 常用包名
         private const val PKG_DOUYIN = "com.ss.android.ugc.aweme"          // 抖音

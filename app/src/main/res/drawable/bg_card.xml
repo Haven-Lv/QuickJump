@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 入口卡片底色：纯白大圆角。GradientDrawable 会提供圆角轮廓，
-     因此 android:elevation 的投影和 clipToOutline 的裁剪都能正确贴合圆角。 -->
+<!-- 入口卡片底色：浅色为白、深色为深灰，圆角轮廓用于投影与裁剪 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#FFFFFF" />
-    <corners android:radius="22dp" />
+    <solid android:color="@color/surface" />
+    <corners android:radius="16dp" />
 </shape>

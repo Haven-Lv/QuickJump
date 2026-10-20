@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 背景渐变（深色） -->
+    <color name="bg_start">#15171E</color>
+    <color name="bg_mid">#121419</color>
+    <color name="bg_end">#0E1015</color>
+
+    <!-- 表面与文字 -->
+    <color name="surface">#1A1D25</color>
+    <color name="text_primary">#ECEEF4</color>
+    <color name="text_secondary">#9AA1B1</color>
+    <color name="text_tertiary">#767D8D</color>
+    <color name="section_title">#9AA1B1</color>
+    <color name="divider">#262A33</color>
+    <color name="icon_secondary">#C3C9D6</color>
+    <color name="about_text">#C3C9D6</color>
+    <color name="soft_button">#23262E</color>
+    <color name="section_icon_bg">#23262E</color>
+    <color name="accent">#4C9AFF</color>
+
+    <!-- 分组主色（深色下提亮，保证对比度） -->
+    <color name="group_code_tint">#4C9AFF</color>
+    <color name="group_packages_tint">#FFB454</color>
+
+    <!-- 各平台图标底座（深色下压低饱和度） -->
+    <color name="tile_cainiao">#12283D</color>
+    <color name="tile_taobao">#33200F</color>
+    <color name="tile_pdd">#331717</color>
+    <color name="tile_express">#33240F</color>
+    <color name="tile_pdd_pending">#33191A</color>
+    <color name="tile_douyin">#23252C</color>
+</resources>

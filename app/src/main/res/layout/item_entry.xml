@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 单个入口卡片：图标底座 + 短标题 + 说明；编辑模式下底部出现左右移动按钮 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card"
+    android:clipToOutline="true"
+    android:elevation="2dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:gravity="center_horizontal"
+    android:minHeight="128dp"
+    android:orientation="vertical"
+    android:paddingStart="10dp"
+    android:paddingTop="14dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="10dp">
+
+    <ImageView
+        android:id="@+id/item_icon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:background="@drawable/bg_icon_tile"
+        android:padding="9dp"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/item_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:lineSpacingExtra="1dp"
+        android:maxLines="2"
+        android:textColor="@color/text_secondary"
+        android:textSize="10sp" />
+
+    <!-- 编辑模式下的排序按钮 -->
+    <LinearLayout
+        android:id="@+id/edit_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/move_left"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:background="@drawable/bg_soft_button"
+            android:contentDescription="@string/move_left"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_chevron_left"
+            android:tint="@color/icon_secondary" />
+
+        <ImageButton
+            android:id="@+id/move_right"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_soft_button"
+            android:contentDescription="@string/move_right"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_chevron_right"
+            android:tint="@color/icon_secondary" />
+    </LinearLayout>
+</LinearLayout>
