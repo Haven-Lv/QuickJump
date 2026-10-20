@@ -24,8 +24,8 @@ android {
         // vivo 手机均为 Android 8.0+，minSdk 26 可简化图标资源
         minSdk = 26
         targetSdk = 34
-        versionCode = 11314529
-        versionName = "1.1314.520"
+        versionCode = 11314530
+        versionName = "1.1314.521"
     }
 
     signingConfigs {
