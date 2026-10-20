@@ -31,4 +31,5 @@
     <color name="tile_express">#FFF3E0</color>
     <color name="tile_pdd_pending">#FFF0F0</color>
     <color name="tile_douyin">#F0F0F5</color>
+    <color name="tile_jd">#FFE9E7</color>
 </resources>

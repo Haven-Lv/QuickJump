@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         ),
         GROUP_PACKAGES to GroupDef(
             GROUP_PACKAGES, R.string.group_packages, R.drawable.ic_section_package, R.color.group_packages_tint,
-            listOf(KEY_EXPRESS, KEY_PDD_PENDING, KEY_DOUYIN)
+            listOf(KEY_EXPRESS, KEY_PDD_PENDING, KEY_DOUYIN, KEY_JD)
         )
     )
 
@@ -137,6 +137,9 @@ class MainActivity : AppCompatActivity() {
         ),
         KEY_DOUYIN to ItemMeta(
             R.string.short_douyin, R.string.desc_douyin, R.drawable.ic_douyin, R.color.tile_douyin
+        ),
+        KEY_JD to ItemMeta(
+            R.string.short_jd, R.string.desc_jd, R.drawable.ic_jd, R.color.tile_jd
         )
     )
 
@@ -571,6 +574,7 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_EXPRESS = "express"
         private const val KEY_PDD_PENDING = "pdd_pending"
         private const val KEY_DOUYIN = "douyin"
+        private const val KEY_JD = "jd"
 
         // 分组与排序（保存在本机）
         private const val GROUP_CODE = "code"
@@ -678,6 +682,21 @@ class MainActivity : AppCompatActivity() {
                     )
                 ),
                 openAppPkgs = listOf(PKG_DOUYIN, PKG_DOUYIN_LITE)
+            ),
+
+            // 7) 京东待取快递：京东订单列表（来自上游 df94cd7「新增京东入口」）
+            KEY_JD to Entry(
+                title = "京东待取快递",
+                chains = listOf(
+                    Chain(
+                        pkg = "com.jingdong.app.mall",
+                        uris = listOf(
+                            "openjd://virtual?params=%7B%22category%22%3A%22jump%22%2C%22des%22%3A%22orderlist%22%7D"
+                        )
+                    )
+                ),
+                openAppPkgs = listOf("com.jingdong.app.mall"),
+                webUri = "https://order.jd.com/center/list.action"
             )
         )
     }

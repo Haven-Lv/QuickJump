@@ -13,6 +13,7 @@
         <package android:name="com.xunmeng.pinduoduo" />
         <package android:name="com.ss.android.ugc.aweme" />
         <package android:name="com.ss.android.ugc.aweme.lite" />
+        <package android:name="com.jingdong.app.mall" />
 
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -37,6 +38,10 @@
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="snssdk2329" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="openjd" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />

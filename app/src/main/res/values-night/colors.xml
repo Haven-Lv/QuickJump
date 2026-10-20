@@ -29,4 +29,5 @@
     <color name="tile_express">#33240F</color>
     <color name="tile_pdd_pending">#33191A</color>
     <color name="tile_douyin">#23252C</color>
+    <color name="tile_jd">#33110F</color>
 </resources>
