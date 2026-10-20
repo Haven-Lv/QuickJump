@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.chuhe.quickjump"
+    namespace = "com.haven.quickjump"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.chuhe.quickjump"
+        applicationId = "com.haven.quickjump"
         // vivo 手机均为 Android 8.0+，minSdk 26 可简化图标资源
         minSdk = 26
         targetSdk = 34

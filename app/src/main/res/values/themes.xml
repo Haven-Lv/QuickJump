@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.QuickJump" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- 状态栏与页面背景同色，视觉一体化 -->
-        <item name="android:statusBarColor">#F8FAFD</item>
+        <!-- 状态栏与页面渐变顶部同色，避免出现一条色带 -->
+        <item name="android:statusBarColor">#FAFBFF</item>
         <item name="android:windowLightStatusBar">true</item>
-    </style>
-
-    <!-- 卡片按钮公共样式 -->
-    <style name="CardButton">
-        <item name="android:background">@drawable/bg_btn</item>
-        <item name="android:elevation">3dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:paddingTop">20dp</item>
-        <item name="android:drawablePadding">14dp</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:textStyle">bold</item>
+        <!-- 启动瞬间的窗口底色与首页一致，减少白闪 -->
+        <item name="android:windowBackground">@drawable/bg_screen</item>
     </style>
 </resources>

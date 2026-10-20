@@ -1,4 +1,4 @@
-package com.chuhe.quickjump
+package com.haven.quickjump
 
 import android.content.ActivityNotFoundException
 import android.content.Context
