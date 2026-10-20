@@ -19,7 +19,7 @@
 
 ## 下载安装
 
-前往 [Releases](https://github.com/Haven-Lv/QuickJump) 下载最新 APK，传到手机直接安装（需允许「安装未知应用」）。
+前往 [Releases](https://github.com/Haven-Lv/QuickJump/releases) 下载最新 APK，传到手机直接安装（需允许「安装未知应用」）。
 
 ## 隐私说明
 
