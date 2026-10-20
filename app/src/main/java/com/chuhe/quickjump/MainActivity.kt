@@ -3,6 +3,7 @@ package com.chuhe.quickjump
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
@@ -175,7 +176,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadAboutText(): String =
         prefs.getString(PREF_ABOUT, null) ?: getString(R.string.about_text)
 
-    /** 「关于」弹窗：展示说明文字，URL 自动可点击 */
+    /** 「关于」弹窗：展示说明文字，URL 自动可点击；附入口体检入口 */
     private fun showAbout() {
         val tv = TextView(this).apply {
             text = loadAboutText()
@@ -191,7 +192,64 @@ class MainActivity : AppCompatActivity() {
             .setTitle(getString(R.string.about_title))
             .setView(scroll)
             .setPositiveButton("关闭", null)
+            .setNeutralButton("入口体检") { _, _ -> showDiagnostics() }
             .show()
+    }
+
+    /**
+     * 入口体检：逐条检测每条 deeplink 在当前手机上是否有页面响应。
+     * 结果可选中复制或截图发给作者，用于远程定位失效链接。
+     */
+    private fun showDiagnostics() {
+        val sb = StringBuilder()
+        sb.appendLine("设备: Android ${android.os.Build.VERSION.RELEASE} (${android.os.Build.MODEL})")
+        sb.appendLine("App 版本: ${BuildConfig.VERSION_NAME}")
+        sb.appendLine()
+        for ((_, entry) in ENTRIES) {
+            sb.appendLine("【${entry.title}】")
+            for (chain in entry.chains) {
+                val installed = isAppInstalled(chain.pkg)
+                sb.appendLine(" 目标App ${if (installed) "✓已安装" else "✗未安装"} (${chain.pkg})")
+                for (uri in chain.uris) {
+                    val ok = installed && canResolve(uri, chain.pkg)
+                    sb.appendLine("  ${if (ok) "✓可用" else "✗无响应"} ${shortUri(uri)}")
+                }
+            }
+            sb.appendLine()
+        }
+        sb.appendLine("✗无响应 = 该链接在当前版本上没有页面处理（未安装或链接已失效）")
+        sb.append("长按对应按钮可更新链接；截图发给作者可远程修复")
+        val tv = TextView(this).apply {
+            text = sb.toString()
+            textSize = 12f
+            typeface = Typeface.MONOSPACE
+            setPadding(40, 24, 40, 8)
+            setTextIsSelectable(true)
+        }
+        val scroll = ScrollView(this).apply { addView(tv) }
+        AlertDialog.Builder(this)
+            .setTitle("入口体检")
+            .setView(scroll)
+            .setPositiveButton("关闭", null)
+            .show()
+    }
+
+    private fun shortUri(uri: String): String =
+        if (uri.length <= 60) uri else uri.substring(0, 60) + "..."
+
+    private fun isAppInstalled(pkg: String): Boolean = try {
+        packageManager.getPackageInfo(pkg, 0)
+        true
+    } catch (e: Exception) {
+        false
+    }
+
+    private fun canResolve(uri: String, pkg: String): Boolean = try {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        if (pkg != null) intent.setPackage(pkg)
+        packageManager.queryIntentActivities(intent, 0).isNotEmpty()
+    } catch (e: Exception) {
+        false
     }
 
     /** 长按问号：编辑「关于」内容，保存在本机 */
