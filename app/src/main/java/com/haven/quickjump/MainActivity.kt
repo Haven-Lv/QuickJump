@@ -673,13 +673,13 @@ class MainActivity : AppCompatActivity() {
         // ⚠️ 内置默认入口链接，核对日期：2026-09~10。失效时可长按按钮临时改，或更新此处在打包。
         private val ENTRIES = mapOf(
 
-            // 1) 菜鸟身份码：菜鸟裹裹驿站身份码页
+            // 1) 菜鸟身份码：菜鸟裹裹「出库码」页（实测直达 identity_code.IdentityCodeActivity）
             KEY_CAINIAO to Entry(
                 title = "菜鸟身份码",
                 chains = listOf(
                     Chain(
                         pkg = "com.cainiao.wireless",
-                        uris = listOf("cainiao://desktop/station_code")
+                        uris = listOf("cainiao://router/station_code")
                     )
                 ),
                 openAppPkgs = listOf("com.cainiao.wireless"),
