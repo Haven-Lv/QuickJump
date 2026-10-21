@@ -33,4 +33,6 @@
     <color name="tile_xhs">#33161C</color>
     <color name="tile_bili">#10262E</color>
     <color name="tile_ks">#331E0F</color>
+    <color name="tile_dewu">#2A2A2A</color>
+    <color name="tile_vip">#33101F</color>
 </resources>

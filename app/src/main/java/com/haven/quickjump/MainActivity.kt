@@ -112,7 +112,10 @@ class MainActivity : AppCompatActivity() {
         ),
         GROUP_PACKAGES to GroupDef(
             GROUP_PACKAGES, R.string.group_packages, R.drawable.ic_section_package, R.color.group_packages_tint,
-            listOf(KEY_EXPRESS, KEY_PDD_PENDING, KEY_DOUYIN, KEY_JD, KEY_XHS, KEY_BILI, KEY_KS), 4
+            listOf(
+                KEY_EXPRESS, KEY_PDD_PENDING, KEY_DOUYIN, KEY_JD,
+                KEY_XHS, KEY_BILI, KEY_KS, KEY_DEWU, KEY_VIP
+            ), 3
         )
     )
 
@@ -146,6 +149,12 @@ class MainActivity : AppCompatActivity() {
         ),
         KEY_KS to ItemMeta(
             R.string.short_ks, R.string.desc_ks, R.drawable.ic_ks, R.color.tile_ks
+        ),
+        KEY_DEWU to ItemMeta(
+            R.string.short_dewu, R.string.desc_dewu, R.drawable.ic_dewu, R.color.tile_dewu
+        ),
+        KEY_VIP to ItemMeta(
+            R.string.short_vip, R.string.desc_vip, R.drawable.ic_vip, R.color.tile_vip
         )
     )
 
@@ -631,6 +640,8 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_XHS = "xhs"
         private const val KEY_BILI = "bili"
         private const val KEY_KS = "ks"
+        private const val KEY_DEWU = "dewu"
+        private const val KEY_VIP = "vip"
 
         // 分组与排序（保存在本机）
         private const val GROUP_CODE = "code"
@@ -812,6 +823,32 @@ class MainActivity : AppCompatActivity() {
                 ),
                 openAppPkgs = listOf("com.smile.gifmaker", "com.kuaishou.nebula"),
                 webUri = "https://app.kwaixiaodian.com/page/kwaishop-trade-order-list-app?layoutType=4&hyId=kwaishopOrder"
+            ),
+
+            // 11) 得物待取快递：买家订单列表（默认「全部」tab）
+            KEY_DEWU to Entry(
+                title = "得物待取快递",
+                chains = listOf(
+                    Chain(
+                        pkg = "com.shizhuang.duapp",
+                        uris = listOf("dewuapp://m.dewu.com/router/order/buyer/orderList?tabId=0")
+                    )
+                ),
+                openAppPkgs = listOf("com.shizhuang.duapp"),
+                webUri = "https://m.dewu.com/"
+            ),
+
+            // 12) 唯品会待取快递：订单列表
+            KEY_VIP to Entry(
+                title = "唯品会待取快递",
+                chains = listOf(
+                    Chain(
+                        pkg = "com.achievo.vipshop",
+                        uris = listOf("vipshop://showOrderList")
+                    )
+                ),
+                openAppPkgs = listOf("com.achievo.vipshop"),
+                webUri = "https://m.vip.com/"
             )
         )
     }

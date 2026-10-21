@@ -18,6 +18,8 @@
     <string name="btn_xhs">小红书待取快递</string>
     <string name="btn_bili">哔哩哔哩待取快递</string>
     <string name="btn_ks">快手待取快递</string>
+    <string name="btn_dewu">得物待取快递</string>
+    <string name="btn_vip">唯品会待取快递</string>
 
     <string name="short_cainiao">菜鸟</string>
     <string name="short_taobao">淘宝</string>
@@ -29,6 +31,8 @@
     <string name="short_xhs">小红书</string>
     <string name="short_bili">哔哩哔哩</string>
     <string name="short_ks">快手</string>
+    <string name="short_dewu">得物</string>
+    <string name="short_vip">唯品会</string>
 
     <!-- 卡片副标题 -->
     <string name="desc_cainiao">驿站扫码取件</string>
@@ -41,6 +45,8 @@
     <string name="desc_xhs">我的订单</string>
     <string name="desc_bili">会员购</string>
     <string name="desc_ks">快手小店</string>
+    <string name="desc_dewu">得物订单</string>
+    <string name="desc_vip">唯品订单</string>
 
     <!-- 排序编辑 -->
     <string name="edit_layout">编辑布局</string>
@@ -59,7 +65,7 @@
     <string name="about_title">关于</string>
 
     <!-- 「关于」页内容（固定文案，不向用户提供修改入口） -->
-    <string name="about_text">关于「快捷跳转」\n\n这是一个纯本地的快递入口小工具：\n· 不联网、不申请权限、不收集任何数据\n· 十个入口直达取件码 / 待取快递页面\n· 长按任意按钮可自定义入口链接\n\n——————\n\n原作者：chuhe0719（https://github.com/chuhe0719/QuickJump）\n二改作者：Haven-Lv（https://github.com/Haven-Lv/QuickJump）\n（觉得好用的可以点一个Star）</string>
+    <string name="about_text">关于「快捷跳转」\n\n这是一个纯本地的快递入口小工具：\n· 不联网、不申请权限、不收集任何数据\n· 十二个入口直达取件码 / 待取快递页面\n· 长按任意按钮可自定义入口链接\n\n——————\n\n原作者：chuhe0719（https://github.com/chuhe0719/QuickJump）\n二改作者：Haven-Lv（https://github.com/Haven-Lv/QuickJump）\n（觉得好用的可以点一个Star）</string>
 
     <!-- 桌面长按快捷菜单：只放 3 个身份码入口（shortLabel 建议不超过 10 个字） -->
     <string name="shortcut_cainiao">菜鸟身份码</string>

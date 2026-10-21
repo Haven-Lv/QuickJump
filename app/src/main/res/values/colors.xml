@@ -35,4 +35,6 @@
     <color name="tile_xhs">#FFE9EC</color>
     <color name="tile_bili">#E6F6FC</color>
     <color name="tile_ks">#FFF0E6</color>
+    <color name="tile_dewu">#EFEFEF</color>
+    <color name="tile_vip">#FFE8F2</color>
 </resources>

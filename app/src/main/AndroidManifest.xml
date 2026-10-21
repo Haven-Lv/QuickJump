@@ -18,6 +18,8 @@
         <package android:name="tv.danmaku.bili" />
         <package android:name="com.smile.gifmaker" />
         <package android:name="com.kuaishou.nebula" />
+        <package android:name="com.shizhuang.duapp" />
+        <package android:name="com.achievo.vipshop" />
 
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -62,6 +64,14 @@
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="ksnebula" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="dewuapp" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="vipshop" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
