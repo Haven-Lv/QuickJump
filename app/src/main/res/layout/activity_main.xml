@@ -104,23 +104,19 @@
             android:paddingEnd="2dp"
             android:paddingBottom="4dp">
 
-            <TextView
+            <ImageButton
                 android:id="@+id/btn_about"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
-                android:background="@drawable/bg_about"
-                android:clickable="true"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_round_button"
                 android:clipToOutline="true"
                 android:contentDescription="@string/about_title"
                 android:elevation="2dp"
-                android:focusable="true"
-                android:fontFamily="sans-serif-medium"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:text="@string/about_mark"
-                android:textColor="@color/about_text"
-                android:textSize="17sp" />
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_help"
+                android:tint="@color/icon_secondary" />
 
             <TextView
                 android:layout_width="0dp"

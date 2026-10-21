@@ -60,7 +60,7 @@
     <string name="item_hidden">已隐藏，退出编辑后不再显示</string>
     <string name="item_shown">已取消隐藏</string>
 
-    <string name="edit_hint">长按卡片可自定义入口链接\n右上角铅笔可调整顺序</string>
+    <string name="edit_hint">长按卡片可自定义入口链接\n右上角铅笔可调整顺序、隐藏入口</string>
     <string name="about_mark">？</string>
     <string name="about_title">关于</string>
 
