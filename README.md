@@ -6,6 +6,14 @@
 
 ## 功能
 
+<p align="center">
+  <img src="docs/screenshots/light.png" width="300" alt="浅色模式">
+  &nbsp;&nbsp;&nbsp;
+  <img src="docs/screenshots/dark.png" width="300" alt="深色模式">
+</p>
+
+<p align="center"><sub>浅色模式 · 深色模式（跟随系统）</sub></p>
+
 ### 十个入口，两个分组
 
 | 分组 | 入口 | 直达页面 |
@@ -28,6 +36,12 @@
 * **调整顺序**：卡片下方 `‹ ›` 左右移动；分组右侧 `⇅` 交换两个分组的上/下顺序
 * **隐藏入口**：卡片右上角的小横线点一下，该入口变暗并被标记为隐藏；退出编辑后不再显示，再次进入编辑仍可见，点一下即可恢复
 * 排序与隐藏状态都保存在本机，重启 App 依然生效；新增入口会自动补在末尾
+
+<p align="center">
+  <img src="docs/screenshots/edit.png" width="300" alt="编辑模式">
+</p>
+
+<p align="center"><sub>编辑模式：右上角横线隐藏入口，底部箭头调整顺序，分组右侧箭头交换两组</sub></p>
 
 ### 其他
 
