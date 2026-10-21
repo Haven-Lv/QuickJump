@@ -436,8 +436,14 @@ class MainActivity : AppCompatActivity() {
         jump(entry)
     }
 
-    /** 多级回退跳转：链 → 拉起 App → 网页 */
+    /** 多级回退跳转：安装检查 → 链 → 拉起 App → 网页 */
     private fun jump(entry: Entry) {
+        // 第 0 级：目标 App 一个都没装，直接提示去安装（跳到浏览器没有意义）
+        val pkgs = (entry.openAppPkgs + entry.chains.map { it.pkg }).distinct()
+        if (pkgs.none { isAppInstalled(it) }) {
+            promptInstall(entry, pkgs.first())
+            return
+        }
         // 第 1 级：逐条链、逐条 deeplink 尝试（setPackage 限定目标 App）
         for (chain in entry.chains) {
             for (uri in chain.uris) {
@@ -456,6 +462,31 @@ class MainActivity : AppCompatActivity() {
             if (tryOpen(web, null)) return
         }
         showDialog("暂时无法打开「${entry.title}」\n可长按按钮更新入口链接，或确认对应 App 已安装")
+    }
+
+    /** 目标 App 未安装：提示并给出应用商店入口，不再跳浏览器 */
+    private fun promptInstall(entry: Entry, pkg: String) {
+        val appName = entry.title.removeSuffix("待取快递").removeSuffix("身份码")
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.not_installed_title, appName))
+            .setMessage(R.string.not_installed_message)
+            .setPositiveButton(R.string.go_install) { _, _ -> openStore(pkg) }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    /** 跳应用商店详情页；没有商店时给出提示 */
+    private fun openStore(pkg: String) {
+        val market = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$pkg"))
+        val ok = try {
+            startActivity(market)
+            true
+        } catch (e: Exception) {
+            false
+        }
+        if (!ok) {
+            Toast.makeText(this, R.string.no_store, Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun tryOpen(uri: String, pkg: String?): Boolean {
@@ -788,7 +819,7 @@ class MainActivity : AppCompatActivity() {
                     Chain(
                         pkg = "tv.danmaku.bili",
                         uris = listOf(
-                            "https://mall.bilibili.com/neul/index.html?page=box_me&noTitleBar=1",
+                            "bilibili://mall/order/list",
                             "bilibili://"
                         )
                     )
