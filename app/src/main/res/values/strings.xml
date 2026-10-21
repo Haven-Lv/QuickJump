@@ -8,19 +8,6 @@
     <string name="group_packages">待取快递</string>
 
     <!-- 首页卡片（短标题） -->
-    <string name="btn_cainiao">菜鸟身份码</string>
-    <string name="btn_taobao">淘宝身份码</string>
-    <string name="btn_pdd">拼多多身份码</string>
-    <string name="btn_express">淘宝待取快递</string>
-    <string name="btn_pdd_pending">拼多多待取快递</string>
-    <string name="btn_douyin">抖音待取快递</string>
-    <string name="btn_jd">京东待取快递</string>
-    <string name="btn_xhs">小红书待取快递</string>
-    <string name="btn_bili">哔哩哔哩待取快递</string>
-    <string name="btn_ks">快手待取快递</string>
-    <string name="btn_dewu">得物待取快递</string>
-    <string name="btn_vip">唯品会待取快递</string>
-
     <string name="short_cainiao">菜鸟</string>
     <string name="short_taobao">淘宝</string>
     <string name="short_pdd">拼多多</string>
@@ -61,7 +48,6 @@
     <string name="item_shown">已取消隐藏</string>
 
     <string name="edit_hint">长按卡片可自定义入口链接\n右上角铅笔可调整顺序、隐藏入口</string>
-    <string name="about_mark">？</string>
     <string name="about_title">关于</string>
 
     <!-- 目标 App 未安装 -->

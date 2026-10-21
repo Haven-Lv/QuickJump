@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#1E88E5</color>
 
     <!-- 背景渐变（浅色） -->
     <color name="bg_start">#FAFBFF</color>
@@ -15,7 +14,6 @@
     <color name="section_title">#6B7280</color>
     <color name="divider">#E6E9F1</color>
     <color name="icon_secondary">#5B6272</color>
-    <color name="about_text">#7C8290</color>
     <color name="soft_button">#F1F3F9</color>
     <color name="section_icon_bg">#EFF3FA</color>
     <color name="accent">#1677FF</color>
