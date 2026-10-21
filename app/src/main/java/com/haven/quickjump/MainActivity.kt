@@ -86,13 +86,14 @@ class MainActivity : AppCompatActivity() {
 
     // ---------- 首页分组、排序与编辑模式 ----------
 
-    /** 一个分组：标题、小图标、默认成员 */
+    /** 一个分组：标题、小图标、默认成员、每行列数 */
     private data class GroupDef(
         val key: String,
         val titleRes: Int,
         val iconRes: Int,
         val iconTintRes: Int,
-        val defaultItems: List<String>
+        val defaultItems: List<String>,
+        val columns: Int
     )
 
     /** 一张卡片的展示信息 */
@@ -107,11 +108,11 @@ class MainActivity : AppCompatActivity() {
     private val groups = linkedMapOf(
         GROUP_CODE to GroupDef(
             GROUP_CODE, R.string.group_code, R.drawable.ic_section_code, R.color.group_code_tint,
-            listOf(KEY_CAINIAO, KEY_TAOBAO, KEY_PDD)
+            listOf(KEY_CAINIAO, KEY_TAOBAO, KEY_PDD), 3
         ),
         GROUP_PACKAGES to GroupDef(
             GROUP_PACKAGES, R.string.group_packages, R.drawable.ic_section_package, R.color.group_packages_tint,
-            listOf(KEY_EXPRESS, KEY_PDD_PENDING, KEY_DOUYIN, KEY_JD)
+            listOf(KEY_EXPRESS, KEY_PDD_PENDING, KEY_DOUYIN, KEY_JD, KEY_XHS, KEY_BILI, KEY_KS), 4
         )
     )
 
@@ -136,6 +137,15 @@ class MainActivity : AppCompatActivity() {
         ),
         KEY_JD to ItemMeta(
             R.string.short_jd, R.string.desc_jd, R.drawable.ic_jd, R.color.tile_jd
+        ),
+        KEY_XHS to ItemMeta(
+            R.string.short_xhs, R.string.desc_xhs, R.drawable.ic_xhs, R.color.tile_xhs
+        ),
+        KEY_BILI to ItemMeta(
+            R.string.short_bili, R.string.desc_bili, R.drawable.ic_bili, R.color.tile_bili
+        ),
+        KEY_KS to ItemMeta(
+            R.string.short_ks, R.string.desc_ks, R.drawable.ic_ks, R.color.tile_ks
         )
     )
 
@@ -187,14 +197,20 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
-    /** 按当前顺序重建整个首页 */
+    /** 按当前顺序重建整个首页（非编辑模式下跳过被隐藏的入口） */
     private fun buildHome() {
         val container = findViewById<LinearLayout>(R.id.group_container)
         container.removeAllViews()
 
-        currentGroupOrder().forEachIndexed { index, groupKey ->
-            if (index > 0) container.addView(makeDivider())
-            container.addView(makeGroupView(groupKey))
+        var rendered = 0
+        currentGroupOrder().forEach { groupKey ->
+            val all = currentItemOrder(groupKey)
+            val visible = if (editMode) all else all.filter { !isHidden(it) }
+            if (visible.isEmpty()) return@forEach
+
+            if (rendered > 0) container.addView(makeDivider())
+            container.addView(makeGroupView(groupKey, all, visible))
+            rendered++
         }
 
         findViewById<ImageButton>(R.id.btn_edit).apply {
@@ -213,7 +229,15 @@ class MainActivity : AppCompatActivity() {
         setBackgroundColor(ContextCompat.getColor(context, R.color.divider))
     }
 
-    private fun makeGroupView(groupKey: String): View {
+    /**
+     * @param allItems     组内完整顺序（用于判断左右箭头是否还能移动）
+     * @param visibleItems 当前要渲染的入口（非编辑模式会剔除被隐藏的）
+     */
+    private fun makeGroupView(
+        groupKey: String,
+        allItems: List<String>,
+        visibleItems: List<String>
+    ): View {
         val def = groups.getValue(groupKey)
         val view = layoutInflater.inflate(
             R.layout.section_group, findViewById<LinearLayout>(R.id.group_container), false
@@ -235,12 +259,35 @@ class MainActivity : AppCompatActivity() {
             setOnClickListener { swapGroups() }
         }
 
-        val row = view.findViewById<LinearLayout>(R.id.items_row)
-        val order = currentItemOrder(groupKey)
-        order.forEachIndexed { index, itemKey ->
-            row.addView(makeItemView(groupKey, itemKey, index, order.size))
+        // 按列数切分成多行，行尾用占位控件补齐，保证每张卡片等宽
+        val rows = view.findViewById<LinearLayout>(R.id.items_container)
+        visibleItems.chunked(def.columns).forEach { chunk ->
+            val row = LinearLayout(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                orientation = LinearLayout.HORIZONTAL
+                isBaselineAligned = false
+            }
+            chunk.forEach { itemKey ->
+                row.addView(makeItemView(groupKey, itemKey, allItems.indexOf(itemKey), allItems.size))
+            }
+            repeat((def.columns - chunk.size).coerceAtLeast(0)) {
+                row.addView(makePlaceholder())
+            }
+            rows.addView(row)
         }
         return view
+    }
+
+    /** 补齐空位用，不可见但占同样宽度 */
+    private fun makePlaceholder(): View {
+        val gap = dp(4)
+        return View(this).apply {
+            layoutParams = LinearLayout.LayoutParams(0, 0, 1f)
+                .also { it.setMargins(gap, gap, gap, gap) }
+        }
     }
 
     private fun makeItemView(groupKey: String, itemKey: String, index: Int, count: Int): View {
@@ -264,6 +311,17 @@ class MainActivity : AppCompatActivity() {
         card.findViewById<TextView>(R.id.item_desc).setText(meta.descRes)
         card.findViewById<LinearLayout>(R.id.edit_bar).visibility =
             if (editMode) View.VISIBLE else View.GONE
+
+        // 隐藏开关：仅编辑模式可见；处于隐藏状态时高亮并让整张卡片变暗
+        val hidden = isHidden(itemKey)
+        card.findViewById<ImageButton>(R.id.btn_hide).apply {
+            visibility = if (editMode) View.VISIBLE else View.GONE
+            imageTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(context, if (hidden) R.color.accent else R.color.icon_secondary)
+            )
+            setOnClickListener { toggleHidden(itemKey) }
+        }
+        card.alpha = if (editMode && hidden) 0.4f else 1f
 
         card.isClickable = !editMode
         card.isLongClickable = !editMode
@@ -321,6 +379,34 @@ class MainActivity : AppCompatActivity() {
         prefs.edit().putString(PREF_ORDER_GROUPS, order.joinToString(",")).apply()
         buildHome()
         Toast.makeText(this, R.string.groups_swapped, Toast.LENGTH_SHORT).show()
+    }
+
+    // ---------- 隐藏入口（仅保存在本机） ----------
+
+    private fun hiddenKeys(): Set<String> =
+        prefs.getString(PREF_HIDDEN, null)
+            ?.split(",")?.filter { it.isNotEmpty() }?.toSet()
+            ?: emptySet()
+
+    private fun isHidden(itemKey: String): Boolean = itemKey in hiddenKeys()
+
+    /** 编辑模式下点卡片右上角的小横线：隐藏 / 取消隐藏 */
+    private fun toggleHidden(itemKey: String) {
+        val keys = hiddenKeys().toMutableSet()
+        val nowHidden = if (keys.contains(itemKey)) {
+            keys.remove(itemKey)
+            false
+        } else {
+            keys.add(itemKey)
+            true
+        }
+        prefs.edit().putString(PREF_HIDDEN, keys.joinToString(",")).apply()
+        buildHome()
+        Toast.makeText(
+            this,
+            if (nowHidden) R.string.item_hidden else R.string.item_shown,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun handleDispatchIntent(intent: Intent?) {
@@ -542,12 +628,16 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_PDD_PENDING = "pdd_pending"
         private const val KEY_DOUYIN = "douyin"
         private const val KEY_JD = "jd"
+        private const val KEY_XHS = "xhs"
+        private const val KEY_BILI = "bili"
+        private const val KEY_KS = "ks"
 
         // 分组与排序（保存在本机）
         private const val GROUP_CODE = "code"
         private const val GROUP_PACKAGES = "packages"
         private const val PREF_ORDER_GROUPS = "order_groups"
         private const val PREF_ORDER_ITEMS = "order_items_"
+        private const val PREF_HIDDEN = "hidden_items"
 
         // 常用包名
         private const val PKG_DOUYIN = "com.ss.android.ugc.aweme"          // 抖音
@@ -664,6 +754,64 @@ class MainActivity : AppCompatActivity() {
                 ),
                 openAppPkgs = listOf("com.jingdong.app.mall"),
                 webUri = "https://order.jd.com/center/list.action"
+            ),
+
+            // 8) 小红书待取快递：订单列表（深链来自 EidenLiu/pickup-code-launcher）
+            KEY_XHS to Entry(
+                title = "小红书待取快递",
+                chains = listOf(
+                    Chain(
+                        pkg = "com.xingin.xhs",
+                        uris = listOf("xhsdiscover://rn/lancer-order/order/list")
+                    )
+                ),
+                openAppPkgs = listOf("com.xingin.xhs"),
+                webUri = "https://www.xiaohongshu.com/"
+            ),
+
+            // 9) 哔哩哔哩待取快递：会员购订单页
+            //    先用 https 在 App 内打开商城订单页，再退到 App 首页
+            KEY_BILI to Entry(
+                title = "哔哩哔哩待取快递",
+                chains = listOf(
+                    Chain(
+                        pkg = "tv.danmaku.bili",
+                        uris = listOf(
+                            "https://mall.bilibili.com/neul/index.html?page=box_me&noTitleBar=1",
+                            "bilibili://"
+                        )
+                    )
+                ),
+                openAppPkgs = listOf("tv.danmaku.bili"),
+                webUri = "https://mall.bilibili.com/neul/index.html?page=box_me&noTitleBar=1"
+            ),
+
+            // 10) 快手待取快递：快手小店订单
+            //     兼容正版快手（kwai）与快手极速版（ksnebula）
+            KEY_KS to Entry(
+                title = "快手待取快递",
+                chains = listOf(
+                    Chain(
+                        pkg = "com.smile.gifmaker",
+                        uris = listOf(
+                            "kwai://webview?url=https%3A%2F%2Fapp.kwaixiaodian.com%2Fpage%2Fkwaishop-trade-order-list-app%3FlayoutType%3D4%26hyId%3DkwaishopOrder",
+                            "kwai://merchanthome",
+                            "kwai://mywallet",
+                            "kwai://"
+                        )
+                    ),
+                    Chain(
+                        pkg = "com.kuaishou.nebula",
+                        uris = listOf(
+                            "ksnebula://webview?url=https%3A%2F%2Fapp.kwaixiaodian.com%2Fpage%2Fkwaishop-trade-order-list-app%3FlayoutType%3D4%26hyId%3DkwaishopOrder",
+                            "ksnebula://merchanthome",
+                            "ksnebula://mywallet",
+                            "ksnebula://"
+                        )
+                    )
+                ),
+                openAppPkgs = listOf("com.smile.gifmaker", "com.kuaishou.nebula"),
+                webUri = "https://app.kwaixiaodian.com/page/kwaishop-trade-order-list-app?layoutType=4&hyId=kwaishopOrder"
             )
         )
     }

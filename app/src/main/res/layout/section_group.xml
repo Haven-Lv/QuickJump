@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 一个分组：小标题（图标 + 名称）+ 右侧交换按钮 + 一行三张卡片 -->
+<!-- 一个分组：小标题（图标 + 名称）+ 右侧交换按钮 + 若干行卡片容器 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -51,10 +51,10 @@
             android:visibility="gone" />
     </LinearLayout>
 
+    <!-- 卡片行由代码按列数动态填充 -->
     <LinearLayout
-        android:id="@+id/items_row"
+        android:id="@+id/items_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:orientation="horizontal" />
+        android:orientation="vertical" />
 </LinearLayout>

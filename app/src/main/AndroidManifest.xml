@@ -14,6 +14,10 @@
         <package android:name="com.ss.android.ugc.aweme" />
         <package android:name="com.ss.android.ugc.aweme.lite" />
         <package android:name="com.jingdong.app.mall" />
+        <package android:name="com.xingin.xhs" />
+        <package android:name="tv.danmaku.bili" />
+        <package android:name="com.smile.gifmaker" />
+        <package android:name="com.kuaishou.nebula" />
 
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -42,6 +46,22 @@
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="openjd" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="xhsdiscover" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="bilibili" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="kwai" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="ksnebula" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />

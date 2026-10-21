@@ -32,4 +32,7 @@
     <color name="tile_pdd_pending">#FFF0F0</color>
     <color name="tile_douyin">#F0F0F5</color>
     <color name="tile_jd">#FFE9E7</color>
+    <color name="tile_xhs">#FFE9EC</color>
+    <color name="tile_bili">#E6F6FC</color>
+    <color name="tile_ks">#FFF0E6</color>
 </resources>
