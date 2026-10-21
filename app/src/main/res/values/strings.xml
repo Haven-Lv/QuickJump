@@ -46,7 +46,7 @@
     <string name="about_mark">？</string>
     <string name="about_title">关于</string>
 
-    <!-- 「关于」页默认内容（长按左下角问号可随时修改，保存在本机） -->
+    <!-- 「关于」页内容（固定文案，不向用户提供修改入口） -->
     <string name="about_text">关于「快捷跳转」\n\n这是一个纯本地的快递入口小工具：\n· 不联网、不申请权限、不收集任何数据\n· 七个按钮直达取件码 / 待取快递页面\n· 长按任意按钮可自定义入口链接\n\n——————\n\n原作者：chuhe0719（https://github.com/chuhe0719/QuickJump）\n二改作者：Haven-Lv（https://github.com/Haven-Lv/QuickJump）\n（觉得好用的可以点一个Star）</string>
 
     <!-- 桌面长按快捷菜单：只放 3 个身份码入口（shortLabel 建议不超过 10 个字） -->

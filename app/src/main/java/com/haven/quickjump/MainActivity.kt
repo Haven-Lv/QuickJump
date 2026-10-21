@@ -75,12 +75,8 @@ class MainActivity : AppCompatActivity() {
         // 右上角铅笔：进入/退出排序编辑模式
         findViewById<View>(R.id.btn_edit).setOnClickListener { toggleEditMode() }
 
-        // 左下角问号：点开「关于」，长按编辑内容
+        // 左下角问号：点开「关于」（内容固定，不提供修改入口）
         findViewById<View>(R.id.btn_about).setOnClickListener { showAbout() }
-        findViewById<View>(R.id.btn_about).setOnLongClickListener {
-            showEditAbout()
-            true
-        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -413,13 +409,10 @@ class MainActivity : AppCompatActivity() {
 
     // ---------- 自定义入口链接（仅存本机） ----------
 
-    private fun loadAboutText(): String =
-        prefs.getString(PREF_ABOUT, null) ?: getString(R.string.about_text)
-
     /** 「关于」弹窗：展示说明文字，URL 自动可点击；附入口体检入口 */
     private fun showAbout() {
         val tv = TextView(this).apply {
-            text = loadAboutText()
+            text = getString(R.string.about_text)
             textSize = 14f
             setLineSpacing(4f, 1f)
             setPadding(48, 32, 48, 16)
@@ -492,31 +485,6 @@ class MainActivity : AppCompatActivity() {
         false
     }
 
-    /** 长按问号：编辑「关于」内容，保存在本机 */
-    private fun showEditAbout() {
-        val input = EditText(this).apply {
-            setText(loadAboutText())
-            setSingleLine(false)
-            minLines = 8
-            gravity = Gravity.TOP
-            setSelection(text.length)
-        }
-        AlertDialog.Builder(this)
-            .setTitle("编辑关于内容")
-            .setMessage("这里的内容会显示在左下角问号弹窗里，链接会自动变成可点击。")
-            .setView(input)
-            .setPositiveButton("保存") { _, _ ->
-                prefs.edit().putString(PREF_ABOUT, input.text.toString()).apply()
-                Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show()
-            }
-            .setNeutralButton("恢复默认") { _, _ ->
-                prefs.edit().remove(PREF_ABOUT).apply()
-                Toast.makeText(this, "已恢复默认内容", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("取消", null)
-            .show()
-    }
-
     private fun loadCustomUris(key: String): List<String> =
         prefs.getString(key, null)
             ?.split("\n")
@@ -565,7 +533,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val PREFS_NAME = "entry_config"
-        private const val PREF_ABOUT = "about_text"
         private const val EXTRA_TARGET = "jump_target"
 
         private const val KEY_CAINIAO = "cainiao"
